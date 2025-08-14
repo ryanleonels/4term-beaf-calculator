@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4项BEAF计算器</title>
+    <script src="OmegaExpantaNum.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 30%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: inline;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+        .result-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+        .warning {
+            color: #f44336;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #ffebee;
+            border-radius: 4px;
+        }
+        .loading {
+            text-align: center;
+            display: none;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 弹窗样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 800px;
+            border-radius: 8px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+        
+        .symbol-explanation {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .symbol-explanation h3 {
+            color: #2196F3;
+            margin-bottom: 10px;
+        }
+        
+        .info-btn {
+            background-color: #2196F3;
+        }
+        
+        .info-btn:hover {
+            background-color: #0b7dda;
+        }
+        
+        .formula {
+            font-family: "Courier New", monospace;
+            background-color: #f5f5f5;
+            padding: 5px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>4项BEAF计算器</h1>
+        <div style="position: fixed; bottom: 10px; left: 10px; font-size: 12px; color: #666;">by VeryrrDefine</div>
+        <div style="position: fixed; bottom: 21px; left: 10px; font-size: 12px; color: #666;">modified from <a href="https://github.com/xhyadofai/GrahalCalculator/blob/main/index.html">https://github.com/xhyadofai/GrahalCalculator/blob/main/index.html</a></div>
+        
+        <div class="input-group">
+            <label>计算{a, b, c, d}:</label>
+            <label for="number_a">a: <input id="number_a" value="10"></label>
+            <label for="number_b">b: <input id="number_b" value="10"></label>
+            <label for="number_c">c: <input id="number_c" value="10"></label>
+            <label for="number_d">d: <input id="number_d" value="2"></label>
+        </div>
+        
+        <button id="calculate">开始计算</button>
+        <button class="info-btn" id="symbolInfo">这些符号都是什么意思?</button>
+        
+        <!-- 符号解释弹窗 -->
+        <div id="symbolModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>还没做</h2>
+            </div>
+        </div>
+        <div>
+            大数库来源：不知道，从github上随便找的，看有四项BEAF支持就直接拿过来用了
+        </div>
+        <div class="warning">
+            <strong>注意：</strong> 4项BEAF是极其巨大的数字。暂时不清楚大数库是否有强大能力来表示这些数值。计算过程可能导致浏览器短暂卡顿，特别是在性能较低的设备上。
+        </div>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>计算中，请稍候...</p>
+        </div>
+        
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        OmegaExpantaNum = OmegaExpantaNum.default;
+        document.addEventListener('DOMContentLoaded', function() {
+            const calculateBtn = document.getElementById('calculate');
+            const numberAInput = document.getElementById('number_a');
+            const numberBInput = document.getElementById('number_b');
+            const numberCInput = document.getElementById('number_c');
+            const numberDInput = document.getElementById('number_d');
+            const resultDiv = document.getElementById('result');
+            const loadingDiv = document.getElementById('loading');
+            const modal = document.getElementById('symbolModal');
+            const infoBtn = document.getElementById('symbolInfo');
+            const span = document.getElementsByClassName('close')[0];
+            
+            // 弹窗控制
+            infoBtn.onclick = function() {
+                modal.style.display = "block";
+            }
+            
+            span.onclick = function() {
+                modal.style.display = "none";
+            }
+            
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
+            
+            
+            // 格式化并显示结果
+            function displayResults(a, b, c, d) {
+                resultDiv.innerHTML = '';
+                loadingDiv.style.display = 'block';
+                
+                // 使用setTimeout让UI有机会更新
+                setTimeout(() => {
+                    try {
+                        const result = OmegaExpantaNum.BEAF(a,b,c,d);
+                        const formattedResult = result.toString();
+                        
+                        const resultItem = document.createElement('div');
+                        resultItem.className = 'result-item';
+
+                        //没找到美化数字对应的js，先放这里把
+                        resultItem.innerHTML = `{${a}, ${b}, ${c}, ${d}}=${formattedResult.replace(/!/g, "替换成后面的")}`;
+                        resultDiv.appendChild(resultItem);
+                    } catch (error) {
+                        const errorItem = document.createElement('div');
+                        errorItem.className = 'warning';
+                        errorItem.textContent = `计算出错: ${error.message}`;
+                        resultDiv.appendChild(errorItem);
+                    } finally {
+                        loadingDiv.style.display = 'none';
+                    }
+                }, 100);
+            }
+            
+            // 计算按钮点击事件
+            calculateBtn.addEventListener('click', function() {
+                
+                displayResults(numberAInput.value, numberBInput.value, numberCInput.value, numberDInput.value);
+            });
+        });
+    </script>
+</body>
+</html>
