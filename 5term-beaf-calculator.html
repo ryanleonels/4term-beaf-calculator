@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>4-Term BEAF Calculator</title>
-    <script src="OmegaExpantaNum.js"></script>
+    <title>5-Term BEAF Calculator</title>
+    <script src="PowiainaNum.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -156,16 +156,17 @@
 </head>
 <body>
     <div class="container">
-        <h1>4-Term BEAF Calculator</h1>
-        <div style="position: fixed; bottom: 10px; left: 10px; font-size: 12px; color: #666;">by VeryrrDefine, English translation by ryanleonels</div>
+        <h1>5-Term BEAF Calculator</h1>
+        <div style="position: fixed; bottom: 10px; left: 10px; font-size: 12px; color: #666;">by VeryrrDefine, English translation and 5-term version by ryanleonels</div>
         <div style="position: fixed; bottom: 21px; left: 10px; font-size: 12px; color: #666;">modified from <a href="https://github.com/xhyadofai/GrahalCalculator/blob/main/index.html">https://github.com/xhyadofai/GrahalCalculator/blob/main/index.html</a></div>
         
         <div class="input-group">
-            <label>Calculate {a, b, c, d}:</label>
+            <label>Calculate {a, b, c, d, e}:</label>
             <label for="number_a">a: <input id="number_a" value="10"></label>
             <label for="number_b">b: <input id="number_b" value="10"></label>
             <label for="number_c">c: <input id="number_c" value="10"></label>
-            <label for="number_d">d: <input id="number_d" value="2"></label>
+            <label for="number_d">d: <input id="number_d" value="10"></label>
+            <label for="number_e">e: <input id="number_e" value="2"></label>
         </div>
         
         <button id="calculate">Calculate</button>
@@ -179,10 +180,10 @@
             </div>
         </div>
         <div>
-            Big number library source (OmegaExpantaNum.js): Unknown, I found it randomly on GitHub. It had support for 4 BEAF terms, so I used it directly.
+            Big number library source (PowiainaNum.js): By <a href="https://github.com/VeryrrDefine/PowiainaNum.js">VeryrrDefine</a>, it has support for 5 BEAF terms.
         </div>
         <div class="warning">
-            <strong>Note:</strong> 4-term BEAF have extremely large values, it is currently unclear whether the number library can properly display them. The calculation process may cause a brief browser lag, especially on lower-performance devices.
+            <strong>Note:</strong> 5-term BEAF have extremely large values, it is currently unclear whether the number library can properly display them. The calculation process may cause a brief browser lag, especially on lower-performance devices.
         </div>
         
         <div class="loading" id="loading">
@@ -192,18 +193,19 @@
         
         <div class="result" id="result"></div>
         <div>
-            <a href="5term-beaf-calculator.html">Try the new 5-Term BEAF Calculator</a>
+            <a href="index.html">Go back to the 4-Term BEAF Calculator</a>
         </div>
     </div>
 
     <script>
-        OmegaExpantaNum = OmegaExpantaNum.default;
+        PowiainaNum = PowiainaNum.default;
         document.addEventListener('DOMContentLoaded', function() {
             const calculateBtn = document.getElementById('calculate');
             const numberAInput = document.getElementById('number_a');
             const numberBInput = document.getElementById('number_b');
             const numberCInput = document.getElementById('number_c');
             const numberDInput = document.getElementById('number_d');
+            const numberEInput = document.getElementById('number_e');
             const resultDiv = document.getElementById('result');
             const loadingDiv = document.getElementById('loading');
             const modal = document.getElementById('symbolModal');
@@ -227,21 +229,21 @@
             
             
             // Format and display the results
-            function displayResults(a, b, c, d) {
+            function displayResults(a, b, c, d, e) {
                 resultDiv.innerHTML = '';
                 loadingDiv.style.display = 'block';
                 
                 // Use setTimeout to give the UI a chance to update
                 setTimeout(() => {
                     try {
-                        const result = OmegaExpantaNum.BEAF(a,b,c,d);
+                        const result = PowiainaNum.BEAF(a,b,c,d,e);
                         const formattedResult = result.toString();
                         
                         const resultItem = document.createElement('div');
                         resultItem.className = 'result-item';
 
                         //I couldn't find the JS library to beautify the result, so I'll just leave it as is
-                        resultItem.innerHTML = `{${a}, ${b}, ${c}, ${d}}=${formattedResult.replace(/!/g, "ω")}`;
+                        resultItem.innerHTML = `{${a}, ${b}, ${c}, ${d}, ${e}}=${formattedResult.replace(/!/g, "ω")}`;
                         resultDiv.appendChild(resultItem);
                     } catch (error) {
                         const errorItem = document.createElement('div');
@@ -257,7 +259,7 @@
             // Calculate button click events
             calculateBtn.addEventListener('click', function() {
                 
-                displayResults(numberAInput.value, numberBInput.value, numberCInput.value, numberDInput.value);
+                displayResults(numberAInput.value, numberBInput.value, numberCInput.value, numberDInput.value, numberEInput.value);
             });
         });
     </script>
