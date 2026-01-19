@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>4项BEAF计算器</title>
+    <title>4-Term BEAF Calculator</title>
     <script src="OmegaExpantaNum.js"></script>
     <style>
         body {
@@ -156,38 +156,38 @@
 </head>
 <body>
     <div class="container">
-        <h1>4项BEAF计算器</h1>
-        <div style="position: fixed; bottom: 10px; left: 10px; font-size: 12px; color: #666;">by VeryrrDefine</div>
+        <h1>4-Term BEAF Calculator</h1>
+        <div style="position: fixed; bottom: 10px; left: 10px; font-size: 12px; color: #666;">by VeryrrDefine, English translation by ryanleonels</div>
         <div style="position: fixed; bottom: 21px; left: 10px; font-size: 12px; color: #666;">modified from <a href="https://github.com/xhyadofai/GrahalCalculator/blob/main/index.html">https://github.com/xhyadofai/GrahalCalculator/blob/main/index.html</a></div>
         
         <div class="input-group">
-            <label>计算{a, b, c, d}:</label>
+            <label>Calculate {a, b, c, d}:</label>
             <label for="number_a">a: <input id="number_a" value="10"></label>
             <label for="number_b">b: <input id="number_b" value="10"></label>
             <label for="number_c">c: <input id="number_c" value="10"></label>
             <label for="number_d">d: <input id="number_d" value="2"></label>
         </div>
         
-        <button id="calculate">开始计算</button>
-        <button class="info-btn" id="symbolInfo">这些符号都是什么意思?</button>
+        <button id="calculate">Calculate</button>
+        <button class="info-btn" id="symbolInfo">What do the symbols mean?</button>
         
-        <!-- 符号解释弹窗 -->
+        <!-- Symbol Explanation Pop-Up -->
         <div id="symbolModal" class="modal">
             <div class="modal-content">
                 <span class="close">&times;</span>
-                <h2>还没做</h2>
+                <h2>Not done yet</h2>
             </div>
         </div>
         <div>
-            大数库来源：不知道，从github上随便找的，看有四项BEAF支持就直接拿过来用了
+            Big number library source (OmegaExpantaNum.js)：Unknown, I found it randomly on GitHub. It had support for 4 BEAF terms, so I used it directly.
         </div>
         <div class="warning">
-            <strong>注意：</strong> 4项BEAF是极其巨大的数字。暂时不清楚大数库是否有强大能力来表示这些数值。计算过程可能导致浏览器短暂卡顿，特别是在性能较低的设备上。
+            <strong>Note:</strong> 4-term BEAF have extremely large values, it is currently unclear whether the number library can properly display them. The calculation process may cause a brief browser lag, especially on lower-performance devices.
         </div>
         
         <div class="loading" id="loading">
             <div class="spinner"></div>
-            <p>计算中，请稍候...</p>
+            <p>Calculation in progress, please wait...</p>
         </div>
         
         <div class="result" id="result"></div>
@@ -207,7 +207,7 @@
             const infoBtn = document.getElementById('symbolInfo');
             const span = document.getElementsByClassName('close')[0];
             
-            // 弹窗控制
+            // Pop-up control
             infoBtn.onclick = function() {
                 modal.style.display = "block";
             }
@@ -223,12 +223,12 @@
             }
             
             
-            // 格式化并显示结果
+            // Format and display the results
             function displayResults(a, b, c, d) {
                 resultDiv.innerHTML = '';
                 loadingDiv.style.display = 'block';
                 
-                // 使用setTimeout让UI有机会更新
+                // Use setTimeout to give the UI a chance to update
                 setTimeout(() => {
                     try {
                         const result = OmegaExpantaNum.BEAF(a,b,c,d);
@@ -237,13 +237,13 @@
                         const resultItem = document.createElement('div');
                         resultItem.className = 'result-item';
 
-                        //没找到美化数字对应的js，先放这里把
-                        resultItem.innerHTML = `{${a}, ${b}, ${c}, ${d}}=${formattedResult.replace(/!/g, "替换成后面的")}`;
+                        //I couldn't find the JS library to beautify the result, so I'll just leave it as is
+                        resultItem.innerHTML = `{${a}, ${b}, ${c}, ${d}}=${formattedResult.replace(/!/g, "ω")}`;
                         resultDiv.appendChild(resultItem);
                     } catch (error) {
                         const errorItem = document.createElement('div');
                         errorItem.className = 'warning';
-                        errorItem.textContent = `计算出错: ${error.message}`;
+                        errorItem.textContent = `Calculation Error: ${error.message}`;
                         resultDiv.appendChild(errorItem);
                     } finally {
                         loadingDiv.style.display = 'none';
@@ -251,7 +251,7 @@
                 }, 100);
             }
             
-            // 计算按钮点击事件
+            // Calculate button click events
             calculateBtn.addEventListener('click', function() {
                 
                 displayResults(numberAInput.value, numberBInput.value, numberCInput.value, numberDInput.value);
